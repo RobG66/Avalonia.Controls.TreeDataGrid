@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -27,6 +27,7 @@ namespace Avalonia.Controls.Primitives
         {
             FocusableProperty.OverrideDefaultValue<TreeDataGridCell>(true);
             DoubleTappedEvent.AddClassHandler<TreeDataGridCell>((x, e) => x.OnDoubleTapped(e));
+            LostFocusEvent.AddClassHandler<TreeDataGridCell>((x, e) => x.OnLostFocus(e));
         }
 
         public int ColumnIndex { get; private set; } = -1;
@@ -143,10 +144,8 @@ namespace Avalonia.Controls.Primitives
                 _treeDataGrid.RaiseCellPrepared(this, ColumnIndex, RowIndex);
         }
 
-        protected override void OnLostFocus(RoutedEventArgs e)
+        protected virtual void OnLostFocus(RoutedEventArgs e)
         {
-            base.OnLostFocus(e);
-
             if (!IsKeyboardFocusWithin && IsEditing)
                 EndEdit();
         }
@@ -163,7 +162,7 @@ namespace Avalonia.Controls.Primitives
             return result;
         }
 
-        protected virtual void OnDoubleTapped(TappedEventArgs e)
+        protected override void OnDoubleTapped(TappedEventArgs e)
         {
             if (Model is not null &&
                 !e.Handled &&
@@ -238,8 +237,7 @@ namespace Avalonia.Controls.Primitives
                 IsEnabledEditGesture(BeginEditGestures.Tap, Model.EditGestures))
             {
                 var point = e.GetCurrentPoint(this);
-                var settings = TopLevel.GetTopLevel(this)?.PlatformSettings;
-                var tapSize = settings?.GetTapSize(point.Pointer.Type) ?? new Size(4, 4);
+                var tapSize = new Size(4, 4);
                 var tapRect = new Rect(_pressedPoint, new Size())
                        .Inflate(new Thickness(tapSize.Width, tapSize.Height));
 

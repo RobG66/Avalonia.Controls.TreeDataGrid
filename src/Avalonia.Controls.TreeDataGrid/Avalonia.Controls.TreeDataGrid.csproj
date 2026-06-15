@@ -1,6 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>True</IsPackable>
     <RootNamespace>Avalonia.Controls</RootNamespace>
   </PropertyGroup>
@@ -8,8 +8,7 @@
     <PackageId>Avalonia.Controls.TreeDataGrid</PackageId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
-    
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Avalonia" Version="12.0.4" />
+    <PackageReference Include="System.Reactive" Version="6.0.0" />
   </ItemGroup>
 </Project>

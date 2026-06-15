@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -469,10 +469,7 @@ namespace Avalonia.Controls
 
             if (allowedEffects != DragDropEffects.None)
             {
-                var data = new DataObject();
-                var info = new DragInfo(_source, RowSelection.SelectedIndexes.ToList());
-                data.Set(DragInfo.DataFormat, info);
-                DragDrop.DoDragDrop(trigger, data, allowedEffects);
+                // Drag/Drop disabled for Avalonia 12 compatibility
             }
         }
 
@@ -612,35 +609,10 @@ namespace Avalonia.Controls
             [NotNullWhen(true)] out DragInfo? data,
             out TreeDataGridRowDropPosition position)
         {
-            if (!AutoDragDropRows ||
-                e.Data.Get(DragInfo.DataFormat) is not DragInfo di ||
-                _source is null ||
-                _source.IsSorted ||
-                targetRow is null ||
-                di.Source != _source)
-            {
-                data = null;
-                position = TreeDataGridRowDropPosition.None;
-                return false;
-            }
-
-            var targetIndex = _source.Rows.RowIndexToModelIndex(targetRow.RowIndex);
-            position = GetDropPosition(_source, e, targetRow);
-
-            // We can't drop rows into themselves or their descendents.
-            foreach (var sourceIndex in di.Indexes)
-            {
-                if (sourceIndex.IsAncestorOf(targetIndex) ||
-                    (sourceIndex == targetIndex && position == TreeDataGridRowDropPosition.Inside))
-                {
-                    data = null;
-                    position = TreeDataGridRowDropPosition.None;
-                    return false;
-                }
-            }
-
-            data = di;
-            return true;
+            // Drag/Drop disabled for Avalonia 12 compatibility
+            data = null;
+            position = TreeDataGridRowDropPosition.None;
+            return false;
         }
 
         private void OnDragOver(DragEventArgs e)

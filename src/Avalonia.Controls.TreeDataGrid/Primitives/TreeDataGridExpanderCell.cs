@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
@@ -136,6 +136,17 @@ namespace Avalonia.Controls.Primitives
                 SetAndRaise(IsExpandedProperty, ref _isExpanded, _model.IsExpanded);
             if (e.PropertyName == nameof(_model.ShowExpander))
                 ShowExpander = _model.ShowExpander;
+        }
+
+        protected override void OnDoubleTapped(Avalonia.Input.TappedEventArgs e)
+        {
+            base.OnDoubleTapped(e);
+
+            if (!e.Handled && ShowExpander)
+            {
+                IsExpanded = !IsExpanded;
+                e.Handled = true;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -386,8 +386,8 @@ namespace Avalonia.Controls.Selection
         {
             var point = e.GetCurrentPoint(sender);
 
-            var commandModifiers = TopLevel.GetTopLevel(sender)?.PlatformSettings?.HotkeyConfiguration.CommandModifiers;
-            var toggleModifier = commandModifiers is not null && e.KeyModifiers.HasFlag(commandModifiers);
+            var commandModifiers = KeyModifiers.Control | KeyModifiers.Meta;
+            var toggleModifier = e.KeyModifiers.HasFlag(commandModifiers);
             var isRightButton = point.Properties.PointerUpdateKind is PointerUpdateKind.RightButtonPressed or
                 PointerUpdateKind.RightButtonReleased;
 
