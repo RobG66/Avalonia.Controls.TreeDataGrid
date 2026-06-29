@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -401,7 +401,7 @@ namespace Avalonia.Controls.TreeDataGridTests
 
             source.Columns.Add(movedColumn);
 
-            var root = (TestWindow)target.GetVisualRoot()!;
+            var root = (TestWindow)TopLevel.GetTopLevel(target)!;
             root.UpdateLayout();
             Dispatcher.UIThread.RunJobs();
 

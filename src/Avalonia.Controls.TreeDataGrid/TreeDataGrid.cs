@@ -449,7 +449,7 @@ namespace Avalonia.Controls
             }
         }
 
-        internal void RaiseRowDragStarted(PointerEventArgs trigger)
+        internal void RaiseRowDragStarted(PointerPressedEventArgs trigger)
         {
             if (_source is null || RowSelection is null)
                 return;
@@ -469,7 +469,12 @@ namespace Avalonia.Controls
 
             if (allowedEffects != DragDropEffects.None)
             {
-                // Drag/Drop disabled for Avalonia 12 compatibility
+                var data = new DataTransfer();
+                var info = new DragInfo(_source, RowSelection.SelectedIndexes.ToList());
+                var item = new DataTransferItem();
+                item.Set(DragInfo.DataFormat, info);
+                data.Add(item);
+                _ = DragDrop.DoDragDropAsync(trigger, data, allowedEffects);
             }
         }
 
@@ -609,10 +614,36 @@ namespace Avalonia.Controls
             [NotNullWhen(true)] out DragInfo? data,
             out TreeDataGridRowDropPosition position)
         {
-            // Drag/Drop disabled for Avalonia 12 compatibility
-            data = null;
-            position = TreeDataGridRowDropPosition.None;
-            return false;
+            var di = e.DataTransfer?.TryGetValue(DragInfo.DataFormat);
+            if (!AutoDragDropRows ||
+                di is null ||
+                _source is null ||
+                _source.IsSorted ||
+                targetRow is null ||
+                di.Source != _source)
+            {
+                data = null;
+                position = TreeDataGridRowDropPosition.None;
+                return false;
+            }
+
+            var targetIndex = _source.Rows.RowIndexToModelIndex(targetRow.RowIndex);
+            position = GetDropPosition(_source, e, targetRow);
+
+            // We can't drop rows into themselves or their descendents.
+            foreach (var sourceIndex in di.Indexes)
+            {
+                if (sourceIndex.IsAncestorOf(targetIndex) ||
+                    (sourceIndex == targetIndex && position == TreeDataGridRowDropPosition.Inside))
+                {
+                    data = null;
+                    position = TreeDataGridRowDropPosition.None;
+                    return false;
+                }
+            }
+
+            data = di;
+            return true;
         }
 
         private void OnDragOver(DragEventArgs e)

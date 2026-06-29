@@ -6,7 +6,8 @@
         xmlns:vm="using:TreeDataGridDemo.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TreeDataGridDemo.MainWindow"
-        Title="TreeDataGridDemo">
+        Title="TreeDataGridDemo"
+        x:CompileBindings="False">
   <TabControl Name="tabs">
     <TabItem Header="Countries">
       <DockPanel>

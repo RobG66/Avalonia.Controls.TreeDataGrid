@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Collections;
@@ -227,7 +227,7 @@ namespace Avalonia.Controls.TreeDataGridTests.Primitives
             Assert.Equal(100, items.Count);
             items.RemoveRange(1, 99);
             Layout(target);
-            Assert.Single(target.Items);
+            Assert.Single(target.Items!);
             Assert.Single(target.GetVisualChildren());
 
             target.Items = new AnonymousSortableRows<Model>(TreeDataGridItemsSourceView<Model>.Empty, null);

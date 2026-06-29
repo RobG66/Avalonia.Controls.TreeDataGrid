@@ -13,16 +13,17 @@ steps:
   inputs:
     version: 8.0.x
 
-- task: CmdLine@2
-  displayName: 'Install Nuke'
-  inputs:
-    script: |
-      dotnet tool install --global Nuke.GlobalTool --version 6.0.3
-
-- script: nuke --target RunTests --configuration Release
+- script: dotnet test --configuration Release
   displayName: 'Run Unit Tests'
 
-- script: nuke --target Package --configuration Release
+- script: |
+    VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' build/SharedVersion.props | xargs)
+    if [[ "$(Build.SourceBranch)" == refs/heads/release/* || "$(Build.SourceBranch)" == refs/heads/master ]]; then
+      dotnet pack src/Avalonia.Controls.TreeDataGrid/Avalonia.Controls.TreeDataGrid.csproj --configuration Release /p:Version="$VERSION"
+    else
+      BUILD_ID_PADDED=$(printf "%07d" $(Build.BuildId))
+      dotnet pack src/Avalonia.Controls.TreeDataGrid/Avalonia.Controls.TreeDataGrid.csproj --configuration Release /p:Version="${VERSION}-cibuild${BUILD_ID_PADDED}-beta"
+    fi
   displayName: 'Generate Nuget Package'
 
 - task: PublishBuildArtifacts@1

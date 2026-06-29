@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -41,6 +41,7 @@ namespace Avalonia.Controls.Primitives
         private IRows? _rows;
         private Point _mouseDownPosition = s_InvalidPoint;
         private TreeDataGrid? _treeDataGrid;
+        private PointerPressedEventArgs? _triggerPressedEventArgs;
 
         public IColumns? Columns
         {
@@ -146,6 +147,7 @@ namespace Avalonia.Controls.Primitives
         {
             base.OnPointerPressed(e);
             _mouseDownPosition = !e.Handled ? e.GetPosition(this) : s_InvalidPoint;
+            _triggerPressedEventArgs = !e.Handled ? e : null;
         }
 
         protected override void OnPointerMoved(PointerEventArgs e)
@@ -172,19 +174,25 @@ namespace Avalonia.Controls.Primitives
 
             var presenter = Parent as TreeDataGridRowsPresenter;
             var owner = presenter?.TemplatedParent as TreeDataGrid;
-            owner?.RaiseRowDragStarted(e);
+            if (_triggerPressedEventArgs is not null)
+            {
+                owner?.RaiseRowDragStarted(_triggerPressedEventArgs);
+                _triggerPressedEventArgs = null;
+            }
         }
 
         protected override void OnPointerReleased(PointerReleasedEventArgs e)
         {
             base.OnPointerReleased(e);
             _mouseDownPosition = s_InvalidPoint;
+            _triggerPressedEventArgs = null;
         }
 
         protected override void OnPointerCaptureLost(PointerCaptureLostEventArgs e)
         {
             base.OnPointerCaptureLost(e);
             _mouseDownPosition = s_InvalidPoint;
+            _triggerPressedEventArgs = null;
         }
 
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
